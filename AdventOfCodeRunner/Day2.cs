@@ -10,6 +10,7 @@ namespace AdventOfCodeRunner
             char key1 = '5';
             char key2 = '5';
 
+            // We have two sets of X/Y cords here so we can track vs both pads at once
             int x1 = 2;
             int y1 = 2;
             int[] cord1;
@@ -19,18 +20,23 @@ namespace AdventOfCodeRunner
             int line = 1;
             using (StreamReader sr = new StreamReader("Day2Input.txt"))
             {
+                // Making sure we're not at the end of file
                 while (sr.Peek() >= 0)
                 {
+                    // Pull the next line
                     string input = sr.ReadLine();
+                    // Do part 1 (9 key pad) first
                     cord1 = LineMove1(x1, y1, input);
                     x1 = cord1[0];
                     y1 = cord1[1];
                     key1 = CordToKey1(x1, y1);
+                    // Do part 2 (13 key pad) now
                     cord2 = LineMove2(x2, y2, input);
                     x2 = cord2[0];
                     y2 = cord2[1];
                     key2 = CordToKey2(x2, y2);
-                    Console.WriteLine("Key1 #{0}: {1}   || Key2: {2}", line, key1, key2);
+                    // Outputs the keys for both solutions
+                    Console.WriteLine("Button press{0} - Key1: {1}   || Key2: {2}", line, key1, key2);
                     line++;
                 }
 
@@ -39,6 +45,10 @@ namespace AdventOfCodeRunner
 
         static int[] LineMove1(int x, int y, string move)
         {
+            // Function for simple 9 key square pad
+            // Checks each move to make sure it's valid
+            // Increments when valid
+            // Returns x/y position of key to press
             int position = 0;
             while (position < move.Length)
             {
@@ -89,6 +99,10 @@ namespace AdventOfCodeRunner
 
         static int[] LineMove2(int x, int y, string move)
         {
+            // Function for 13 key diamond pad
+            // Checks each move to make sure it's valid
+            // Increments when valid
+            // Returns x/y position of key to press
             int position = 0;
             while (position < move.Length)
             {
@@ -169,6 +183,7 @@ namespace AdventOfCodeRunner
 
         static char CordToKey1(int x, int y)
         {
+            // Translates the X/Y into key of 9 key square pad
             if (y == 1)
             {
                 if (x == 1)
@@ -217,6 +232,7 @@ namespace AdventOfCodeRunner
         }
         static char CordToKey2(int x, int y)
         {
+            // Translates the X/Y into key of 13 key diamond pad
             if (y == 1)
             {
                 return '1';

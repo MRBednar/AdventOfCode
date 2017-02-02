@@ -9,12 +9,13 @@ namespace AdventOfCodeRunner
     {
         public void Run()
         {
-            String[] args = null;
+            String[] moves = null;
             string inputSplit = @",\s";
             string dirsplit = @"\d";
             string distSplit = @"\D";
+            Regex letterRgx = new Regex(dirsplit);
+            Regex numberRgx = new Regex(distSplit);
             int dir = 1;
-            int dist = 0;
             int x = 0;
             int y = 0;
             List<string> stops = new List<string>();
@@ -25,24 +26,28 @@ namespace AdventOfCodeRunner
 
             using (StreamReader sr = new StreamReader("Day1Input.txt"))
             {
+                // Since lines don't matter in this day, just get all of
+                // the directions at once. The break them into individual
+                // turn/move commands
                 string input = sr.ReadToEnd();
-                args = Regex.Split(input, inputSplit);
+                moves = Regex.Split(input, inputSplit);
 
             }
-            foreach (var move in args)
+            foreach (var move in moves)
             {
-                int i = 0;
+                int steps = 0;
                 string check = "No";
-                String[] splitDir = Regex.Split(move, dirsplit);
-                String[] splitDist = Regex.Split(move, distSplit);
-                int.TryParse(splitDist[1], out int distance);
-                dir = rotate(dir, splitDir[0]);
+                string direction = letterRgx.Replace(move, String.Empty);
+                string stringDistance = numberRgx.Replace(move, String.Empty);
+                int distance = int.Parse(stringDistance);
+                dir = rotate(dir, direction);
+                // Figure out what direction to increment up/down,  
+                // Check each step against all the cords as you go if EBHQ hasn't been found
                 if (dir == 1 || dir == 2)
                 {
-                    dist = dist + distance;
                     if (dir == 1)
                     {
-                        while (i < distance)
+                        while (steps < distance)
                         {
                             x++;
                             if (EBHQ.Equals("No"))
@@ -53,12 +58,12 @@ namespace AdventOfCodeRunner
                                     EBHQ = check;
                                 }
                             }
-                            i++;
+                            steps++;
                         }
                     }
                     else
                     {
-                        while (i < distance)
+                        while (steps < distance)
                         {
                             y++;
                             if (EBHQ.Equals("No"))
@@ -69,16 +74,15 @@ namespace AdventOfCodeRunner
                                     EBHQ = check;
                                 }
                             }
-                            i++;
+                            steps++;
                         }
                     }
                 }
                 else
                 {
-                    dist = dist - distance;
                     if (dir == 3)
                     {
-                        while (i < distance)
+                        while (steps < distance)
                         {
                             x--;
                             if (EBHQ.Equals("No"))
@@ -89,12 +93,12 @@ namespace AdventOfCodeRunner
                                     EBHQ = check;
                                 }
                             }
-                            i++;
+                            steps++;
                         }
                     }
                     else
                     {
-                        while (i < distance)
+                        while (steps < distance)
                         {
                             y--;
                             if (EBHQ.Equals("No"))
@@ -105,18 +109,24 @@ namespace AdventOfCodeRunner
                                     EBHQ = check;
                                 }
                             }
-                            i++;
+                            steps++;
                         }
                     }
                 }
             }
+            // Reusing start here, as it's there
+            start = x + ", " + y;
+            int dist = DistTranslate(start);
             ebhqdist = DistTranslate(EBHQ);
-            Console.WriteLine("Full Path distance away from start: {0}", Math.Abs(dist));
+            Console.WriteLine("Full Path distance away from start: {0}", dist);
             Console.WriteLine("Easter Bunny HQ distance: {0}", ebhqdist);
         }
 
         public static int DistTranslate(string cords)
         {
+            // Rather than track distances, this lets me turn coordinates
+            // directly into distance. The values need to be ABS becase there is no REAL
+            // negative distance from start
             int dist = 0;
             string[] separatingChars = { ", " };
             string[] cordList = cords.Split(separatingChars, StringSplitOptions.None);
@@ -129,6 +139,8 @@ namespace AdventOfCodeRunner
 
         public static int rotate(int dir, string turn)
         {
+            // simple function to figure out the direction you'll be facing after the turn
+            // 1 = Right, 2 = Up, 3 = Left, 4 = Down
             if (turn.Contains("R"))
             {
                 dir++;
@@ -150,6 +162,9 @@ namespace AdventOfCodeRunner
 
         public static string stopCheck(int x, int y, string EBHQ, List<string> stops)
         {
+            // Simple function for tracking if we've been on a spot before. 
+            // So long as EBHQ isn't already set, sets it to a string of the
+            // X/Y coordinates.
             string stop = x + ", " + y;
             
             if (stops.Contains(stop))
