@@ -7,28 +7,87 @@ namespace AdventOfCodeRunner
     {
         public void Run()
         {
-            char key = '5';
-            int x = 1;
-            int y = 3;
-            int[] cord;
+            char key1 = '5';
+            char key2 = '5';
+
+            int x1 = 2;
+            int y1 = 2;
+            int[] cord1;
+            int x2 = 1;
+            int y2 = 3;
+            int[] cord2;
             int line = 1;
             using (StreamReader sr = new StreamReader("Day2Input.txt"))
             {
                 while (sr.Peek() >= 0)
                 {
                     string input = sr.ReadLine();
-                    cord = LineMove(x, y, input);
-                    x = cord[0];
-                    y = cord[1];
-                    key = CordToKey(x, y);
-                    Console.WriteLine("Key #{0}: {1}", line, key);
+                    cord1 = LineMove1(x1, y1, input);
+                    x1 = cord1[0];
+                    y1 = cord1[1];
+                    key1 = CordToKey1(x1, y1);
+                    cord2 = LineMove2(x2, y2, input);
+                    x2 = cord2[0];
+                    y2 = cord2[1];
+                    key2 = CordToKey2(x2, y2);
+                    Console.WriteLine("Key1 #{0}: {1}   || Key2: {2}", line, key1, key2);
                     line++;
                 }
 
             }
         }
 
-        static int[] LineMove(int x, int y, string move)
+        static int[] LineMove1(int x, int y, string move)
+        {
+            int position = 0;
+            while (position < move.Length)
+            {
+                if (move[position].Equals('U') || move[position].Equals('D'))
+                {
+                    if (move[position].Equals('U'))
+                    {
+                        y--;
+                        if (y <= 0)
+                        {
+                            y = 1;
+                        }
+                    }
+                    else
+                    {
+                        y++;
+                        if (y >= 4)
+                        {
+                            y = 3;
+                        }
+                    }
+                }
+                else
+                {
+                    if (move[position].Equals('L'))
+                    {
+                        x--;
+                        if (x <= 0)
+                        {
+                            x = 1;
+                        }
+                    }
+                    else
+                    {
+                        x++;
+                        if (x >= 4)
+                        {
+                            x = 3;
+                        }
+                    }
+                }
+                position++;
+            }
+            int[] cord = { x, y };
+            return cord;
+
+        }
+
+        static int[] LineMove2(int x, int y, string move)
         {
             int position = 0;
             while (position < move.Length)
@@ -108,7 +167,55 @@ namespace AdventOfCodeRunner
 
         }
 
-        static char CordToKey(int x, int y)
+        static char CordToKey1(int x, int y)
+        {
+            if (y == 1)
+            {
+                if (x == 1)
+                {
+                    return '1';
+                }
+                else if (x == 2)
+                {
+                    return '2';
+                }
+                else
+                {
+                    return '3';
+                }
+            }
+            else if (y == 2)
+            {
+                if (x == 1)
+                {
+                    return '4';
+                }
+                else if (x == 2)
+                {
+                    return '5';
+                }
+                else 
+                {
+                    return '6';
+                }
+            }
+            else 
+            {
+                if (x == 1)
+                {
+                    return '7';
+                }
+                else if (x == 2)
+                {
+                    return '8';
+                }
+                else
+                {
+                    return '9';
+                }
+            }
+        }
+        static char CordToKey2(int x, int y)
         {
             if (y == 1)
             {
