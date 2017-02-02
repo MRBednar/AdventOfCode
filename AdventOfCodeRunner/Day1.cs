@@ -29,7 +29,6 @@ namespace AdventOfCodeRunner
                 args = Regex.Split(input, inputSplit);
 
             }
-            Console.WriteLine("Numbers!");
             foreach (var move in args)
             {
                 int i = 0;
@@ -43,7 +42,6 @@ namespace AdventOfCodeRunner
                     dist = dist + distance;
                     if (dir == 1)
                     {
-                        Console.WriteLine("North: {0}", distance);
                         while (i < distance)
                         {
                             x++;
@@ -60,7 +58,6 @@ namespace AdventOfCodeRunner
                     }
                     else
                     {
-                        Console.WriteLine("East: {0}", distance);
                         while (i < distance)
                         {
                             y++;
@@ -81,7 +78,6 @@ namespace AdventOfCodeRunner
                     dist = dist - distance;
                     if (dir == 3)
                     {
-                        Console.WriteLine("South: {0}", distance);
                         while (i < distance)
                         {
                             x--;
@@ -98,7 +94,6 @@ namespace AdventOfCodeRunner
                     }
                     else
                     {
-                        Console.WriteLine("West: {0}", distance);
                         while (i < distance)
                         {
                             y--;
@@ -116,7 +111,7 @@ namespace AdventOfCodeRunner
                 }
             }
             ebhqdist = DistTranslate(EBHQ);
-            Console.WriteLine("Full Path distance away from start: {0}", dist);
+            Console.WriteLine("Full Path distance away from start: {0}", Math.Abs(dist));
             Console.WriteLine("Easter Bunny HQ distance: {0}", ebhqdist);
         }
 
@@ -127,7 +122,7 @@ namespace AdventOfCodeRunner
             string[] cordList = cords.Split(separatingChars, StringSplitOptions.None);
             int x = int.Parse(cordList[0]);
             int y = int.Parse(cordList[1]);
-            dist = x + y;
+            dist = Math.Abs(x) + Math.Abs(y);
 
             return dist;
         }
@@ -156,8 +151,7 @@ namespace AdventOfCodeRunner
         public static string stopCheck(int x, int y, string EBHQ, List<string> stops)
         {
             string stop = x + ", " + y;
-
-            Console.WriteLine(stop);
+            
             if (stops.Contains(stop))
             {
                 if (EBHQ.Equals("No"))
