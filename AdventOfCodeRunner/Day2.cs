@@ -12,7 +12,7 @@ namespace AdventOfCodeRunner
             int y = 3;
             int[] cord;
             int line = 1;
-            using (StreamReader sr = new StreamReader("C:\\Users\\mbednar\\Desktop\\Day2Input.txt"))
+            using (StreamReader sr = new StreamReader("Day2Input.txt"))
             {
                 while (sr.Peek() >= 0)
                 {

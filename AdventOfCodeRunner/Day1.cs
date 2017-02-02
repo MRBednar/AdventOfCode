@@ -23,7 +23,7 @@ namespace AdventOfCodeRunner
             string EBHQ = "No";
             int ebhqdist = 0;
 
-            using (StreamReader sr = new StreamReader("C:\\Users\\mbednar\\Desktop\\Day1Input.txt"))
+            using (StreamReader sr = new StreamReader("Day1Input.txt"))
             {
                 string input = sr.ReadToEnd();
                 args = Regex.Split(input, inputSplit);
