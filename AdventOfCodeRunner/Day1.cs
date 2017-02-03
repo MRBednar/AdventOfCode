@@ -29,7 +29,7 @@ namespace AdventOfCodeRunner
             String[] moves = null;
 
 
-            stops.Insert(0, stop);
+            stops.Add(stop);
             using (StreamReader sr = new StreamReader("Day1Input.txt"))
             {
                 // Since lines don't matter in this day, just get all of
@@ -42,19 +42,17 @@ namespace AdventOfCodeRunner
                     moves = input.Split(inputSplit, StringSplitOptions.RemoveEmptyEntries);
                 }
             }
-            
+
+            Regex letterRgx = new Regex(@"\d");
+            Regex numberRgx = new Regex(@"\D");
             foreach (var move in moves)
             {
-                Regex letterRgx = new Regex(@"\d");
                 string direction = letterRgx.Replace(move, String.Empty);
-                Regex numberRgx = new Regex(@"\D");
                 string stringDistance = numberRgx.Replace(move, String.Empty);
                 int distance = int.Parse(stringDistance);
                 dir = rotate(dir, direction);
-                // Figure out what direction to increment up/down,  
-                // Check each step against all the cords as you go if EBHQ hasn't been found
 
-                var restults = doThing(distance, stops, stop, EasterHQ, dir, ebFound);
+                var restults = walk(distance, stops, stop, EasterHQ, dir, ebFound);
                 stop = restults.Item1;
                 EasterHQ = restults.Item2;
                 ebFound = restults.Item3;
@@ -65,38 +63,35 @@ namespace AdventOfCodeRunner
             Console.WriteLine("Easter Bunny HQ distance: {0}", Math.Abs(EasterHQ.x) + Math.Abs(EasterHQ.y));
         }
 
-        public static Tuple<CoOrds, CoOrds, bool> doThing(int distance,List<CoOrds> stops ,CoOrds stop, CoOrds EasterHQ, int dir, bool ebFound)
+        public static Tuple<CoOrds, CoOrds, bool> walk(int distance,List<CoOrds> stops ,CoOrds stop, CoOrds EasterHQ, int dir, bool ebFound)
         {
+            // Determines which direction to increment
+            // Checks to see if we've been here before 
             int steps = 0;
             while (steps < distance)
             {
-                switch (dir)
+                if (dir == 1) {
+                    stop.y++;
+                } else if (dir == 2)
                 {
-                    case 1:
-                        stop.x++;
-                        break;
-                    case 2:
-                        stop.y++;
-                        break;
-                    case 3:
-                        stop.x--;
-                        break;
-                    case 4:
-                        stop.y--;
-                        break;
+                    stop.x++;
+                } else if (dir == 3)
+                {
+                    stop.y--;
+                } else
+                {
+                    stop.x--;
                 }
+                        
                 if (ebFound == false)
                 {
                     if (stops.Contains(stop))
                     {
                         ebFound = true;
+                        EasterHQ = stop;
                     } else
                     {
                         stops.Add(stop);
-                    }
-                    if (ebFound)
-                    {
-                        EasterHQ = stop;
                     }
                 }
                 steps++;
@@ -108,11 +103,11 @@ namespace AdventOfCodeRunner
         public static int rotate(int dir, string turn)
         {
             // simple function to figure out the direction you'll be facing after the turn
-            // 1 = Right, 2 = Up, 3 = Left, 4 = Down
+            // 1 = Up, 2 = Right, 3 = Down, 4 = Left
             if (turn.Contains("R"))
             {
                 dir++;
-                if (dir >= 5)
+                if (dir > 4)
                 {
                     dir = 1;
                 }
