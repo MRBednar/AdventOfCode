@@ -19,23 +19,15 @@ namespace AdventOfCodeRunner
         }
         public void Run()
         {
-            List<CoOrds> stops = new List<CoOrds>();
-            CoOrds stop = new CoOrds();
-            int dir = 1;
-            stop.x = 0;
-            stop.y = 0;
-            CoOrds EasterHQ = new CoOrds();
-            bool ebFound = false;
+            // Read each line in the text and write to string list
             String[] moves = null;
-
-
-            stops.Add(stop);
             using (StreamReader sr = new StreamReader("Day1Input.txt"))
             {
-                // Since lines don't matter in this day, just get all of
-                // the directions at once. The break them into individual
-                // turn/move commands
-                IEnumerable<string> inputs = File.ReadLines("Day1Input.txt");
+                List<string> inputs = null;
+                while (sr.Peek() >= 0)
+                {
+                     inputs.Add(sr.ReadLine());
+                }
                 foreach(string input in inputs)
                 {
                     string[] inputSplit = { ", " };
@@ -43,6 +35,19 @@ namespace AdventOfCodeRunner
                 }
             }
 
+            // stops stores the coordinates we pass through between start and the Easter Bunny HQ
+            // currentStop is the location we are currently at
+            // dir is a numerical representation for the direction we are facing
+            // easterHQ is the coordinates for the Easter Bunny HQ for part 2
+            // ebFound is a bool telling us if we've found the location of easterHQ as per part 2
+            // the Regexs are for spitting the turns and steps from each set of moves
+            List<CoOrds> stops = new List<CoOrds>();
+            CoOrds currentStop = new CoOrds();
+            int dir = 1;
+            currentStop.x = 0;
+            currentStop.y = 0;
+            CoOrds easterHQ = new CoOrds();
+            bool ebFound = false;
             Regex letterRgx = new Regex(@"\d");
             Regex numberRgx = new Regex(@"\D");
             foreach (var move in moves)
@@ -52,15 +57,15 @@ namespace AdventOfCodeRunner
                 int distance = int.Parse(stringDistance);
                 dir = rotate(dir, direction);
 
-                var restults = walk(distance, stops, stop, EasterHQ, dir, ebFound);
-                stop = restults.Item1;
-                EasterHQ = restults.Item2;
+                var restults = walk(distance, stops, currentStop, easterHQ, dir, ebFound);
+                currentStop = restults.Item1;
+                easterHQ = restults.Item2;
                 ebFound = restults.Item3;
 
 
             }
-            Console.WriteLine("Full Path distance away from start: {0}", Math.Abs(stop.x) + Math.Abs(stop.y));
-            Console.WriteLine("Easter Bunny HQ distance: {0}", Math.Abs(EasterHQ.x) + Math.Abs(EasterHQ.y));
+            Console.WriteLine("Full Path distance away from start: {0}", Math.Abs(currentStop.x) + Math.Abs(currentStop.y));
+            Console.WriteLine("Easter Bunny HQ distance: {0}", Math.Abs(easterHQ.x) + Math.Abs(easterHQ.y));
         }
 
         public static Tuple<CoOrds, CoOrds, bool> walk(int distance,List<CoOrds> stops ,CoOrds stop, CoOrds EasterHQ, int dir, bool ebFound)
@@ -104,21 +109,14 @@ namespace AdventOfCodeRunner
         {
             // simple function to figure out the direction you'll be facing after the turn
             // 1 = Up, 2 = Right, 3 = Down, 4 = Left
-            if (turn.Contains("R"))
+            dir = (turn.Contains("R")) ? dir++ : dir--;
+            
+            if (dir > 4)
             {
-                dir++;
-                if (dir > 4)
-                {
-                    dir = 1;
-                }
-            }
-            else
+                dir = 1;
+            } else if (dir < 1)
             {
-                dir--;
-                if (dir < 1)
-                {
-                    dir = 4;
-                }
+                dir = 4;
             }
             return dir;
         }
