@@ -23,7 +23,7 @@ namespace AdventOfCodeRunner
             String[] moves = null;
             using (StreamReader sr = new StreamReader("Day1Input.txt"))
             {
-                List<string> inputs = null;
+                List<string> inputs = new List<string>();
                 while (sr.Peek() >= 0)
                 {
                      inputs.Add(sr.ReadLine());
@@ -43,7 +43,7 @@ namespace AdventOfCodeRunner
             // the Regexs are for spitting the turns and steps from each set of moves
             List<CoOrds> stops = new List<CoOrds>();
             CoOrds currentStop = new CoOrds();
-            int dir = 1;
+            int dir = 0;
             currentStop.x = 0;
             currentStop.y = 0;
             CoOrds easterHQ = new CoOrds();
@@ -75,12 +75,12 @@ namespace AdventOfCodeRunner
             int steps = 0;
             while (steps < distance)
             {
-                if (dir == 1) {
+                if (dir == 0) {
                     stop.y++;
-                } else if (dir == 2)
+                } else if (dir == 1)
                 {
                     stop.x++;
-                } else if (dir == 3)
+                } else if (dir == 2)
                 {
                     stop.y--;
                 } else
@@ -108,16 +108,10 @@ namespace AdventOfCodeRunner
         public static int rotate(int dir, string turn)
         {
             // simple function to figure out the direction you'll be facing after the turn
-            // 1 = Up, 2 = Right, 3 = Down, 4 = Left
-            dir = (turn.Contains("R")) ? dir++ : dir--;
-            
-            if (dir > 4)
-            {
-                dir = 1;
-            } else if (dir < 1)
-            {
-                dir = 4;
-            }
+            // 0 = Up, 1 = Right, 2 = Down, 3 = Left
+            dir = (turn.Equals("R")) ? dir+1 : dir-1;
+
+            dir = (dir + 4) % 4;
             return dir;
         }
     }
