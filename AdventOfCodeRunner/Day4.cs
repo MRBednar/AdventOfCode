@@ -33,46 +33,55 @@ namespace AdventOfCodeRunner
                     string[] letterAndCheck = Regex.Split(letters, cheksumSplit);
                     letterAndCheck[1] = removeBrackets.Replace(letterAndCheck[1], String.Empty);
                     string numbers = numberRgx.Replace(nohyphen, String.Empty);
-                    char[] distinctletters = letterAndCheck[0].Distinct().ToArray();
-                    int checkInt = 100000000;
-                    char checkChar = 'A';
-                    bool isGood = true;
-                    Console.WriteLine("Checking Line: {0}", input);
-                    foreach (char letter in letterAndCheck[1])
-                    {
-                        int count = letterAndCheck[0].Count(f => f == letter);
-                        Console.WriteLine("Letter: {0}   | Count: {1}", letter, count);
-                        if (count > checkInt)
-                        {
-                            //Console.WriteLine("Invalid letter: {0}", letter);
-                            isGood = false;
-                            break;
-                        }
-                        else if (count == checkInt)
-                        {
-                            int index = char.ToUpper(letter) - 64;
-                            int checkIndex = char.ToUpper(checkChar) - 64;
-                            if (index < checkIndex)
-                            {
-                                //Console.WriteLine("Invalid letter: {0}", letter);
-                                isGood = false;
-                                break;
-                            }
-                        }
-                        checkInt = count;
-                        checkChar = letter;
-                    }
+                    var topChars = topFive(letterAndCheck[0]);
 
-                    if (isGood)
+                    if (letterAndCheck[1].Equals(topChars))
                     {
                         sectorIDSum1 = sectorIDSum1 + int.Parse(numbers);
                         Console.WriteLine("Valid line, Current SectorID Sum: {0}", sectorIDSum1);
                     }
-
-                    Console.ReadKey();
                 }
                 Console.WriteLine("Sum of Sector IDs: {0}", sectorIDSum1);
             }
+        }
+
+        public class charCount
+        {
+            public int count { get; set; }
+            public char listChar { get; set; }
+        }
+
+        private string topFive (string codeCheck)
+        {
+            var charList = new List<charCount>();
+
+            char[] distinct = codeCheck.Distinct().ToArray();
+
+           
+            foreach (char checkChar in distinct)
+            {
+                charCount charCheck = new charCount();
+                int count = codeCheck.Count(f => f == checkChar);
+                charCheck.count = count;
+                charCheck.listChar = checkChar;
+
+
+                charList.Add(charCheck);
+            }
+
+            var query = charList.OrderBy(charCount => charCount.listChar);
+            var top5 = query.OrderByDescending(charCount => charCount.count).Take(5);
+
+            string topChar = "";
+            int i = 0;
+            foreach (charCount topPick in top5)
+            {
+                topChar += topPick.listChar;
+                i++;
+            }
+
+            return topChar;
+
         }
     }
 }
