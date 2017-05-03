@@ -17,8 +17,7 @@ namespace AdventOfCodeRunner
             string cheksumSplit = @"\[";
             string bracktRMV = @"\]";
 
-            // remove the hyphens because they don't mean anything (Part 1)
-            string nohyphen;
+
             // Regex functions for cleaning up the inputs (Part 1)
             Regex letterRgx = new Regex(numberSplit);
             Regex numberRgx = new Regex(letterSplit);
@@ -28,17 +27,16 @@ namespace AdventOfCodeRunner
                 while (sr.Peek() >= 0)
                 {
                     string input = sr.ReadLine();
-                    nohyphen = input.Replace("-", String.Empty);
-                    string letters = letterRgx.Replace(nohyphen, String.Empty);
+                    string letters = letterRgx.Replace(input, String.Empty);
                     string[] letterAndCheck = Regex.Split(letters, cheksumSplit);
                     letterAndCheck[1] = removeBrackets.Replace(letterAndCheck[1], String.Empty);
-                    string numbers = numberRgx.Replace(nohyphen, String.Empty);
-                    var topChars = topFive(letterAndCheck[0]);
+                    int numbers = int.Parse(numberRgx.Replace(input, String.Empty));
+                    var topChars = topFive(letterAndCheck[0].Replace("-", String.Empty));
 
                     if (letterAndCheck[1].Equals(topChars))
                     {
-                        sectorIDSum1 = sectorIDSum1 + int.Parse(numbers);
-                        Console.WriteLine("Valid line, Current SectorID Sum: {0}", sectorIDSum1);
+                        translateLine(letterAndCheck[0], numbers);
+                        sectorIDSum1 = sectorIDSum1 + numbers;
                     }
                 }
                 Console.WriteLine("Sum of Sector IDs: {0}", sectorIDSum1);
@@ -47,6 +45,7 @@ namespace AdventOfCodeRunner
 
         public class charCount
         {
+            // Simple object for handling the letter counts
             public int count { get; set; }
             public char listChar { get; set; }
         }
@@ -57,7 +56,7 @@ namespace AdventOfCodeRunner
 
             char[] distinct = codeCheck.Distinct().ToArray();
 
-           
+            // gets count for each character in the string
             foreach (char checkChar in distinct)
             {
                 charCount charCheck = new charCount();
@@ -69,9 +68,11 @@ namespace AdventOfCodeRunner
                 charList.Add(charCheck);
             }
 
+            // first order alphabetically, then order by letter count, and take only the top 5
             var query = charList.OrderBy(charCount => charCount.listChar);
             var top5 = query.OrderByDescending(charCount => charCount.count).Take(5);
 
+            // Turn the top 5 into a string that can be compared to the checksum
             string topChar = "";
             int i = 0;
             foreach (charCount topPick in top5)
@@ -82,6 +83,36 @@ namespace AdventOfCodeRunner
 
             return topChar;
 
+        }
+
+        public void translateLine (string line, int number)
+        {
+            string translation = "";
+            line = line.Replace("-", " ");
+            int move = number % 26;
+            foreach (char character in line)
+            {
+                if (!character.Equals(' '))
+                {
+                    char charPlus = (char)(((int)character) + move);
+                    int charValue = Convert.ToInt32(charPlus);
+                    if (charValue > 122)
+                    {
+                        charValue = (charValue - 122) + 96;
+                    }
+                    char nextChar = Convert.ToChar(charValue);
+                    translation += nextChar;
+
+                } else
+                {
+                    translation += " ";
+                }
+            }
+
+            if (translation.Contains("north"))
+            {
+                Console.WriteLine("Translation: {0}   |   SectorID: {1}", translation, number);
+            }
         }
     }
 }
