@@ -12,18 +12,36 @@ namespace AdventOfCodeRunner
         public void Run()
         {
             string password = "";
+            char?[] passwordArray = new char?[8];
             int i = 0;
-            Console.WriteLine(password.Length);
-            while (password.Length < 8)
+            int arraycount = 0;
+            while (arraycount < 8)
             {
                 string hash = CalculateMD5Hash("ugkcyxxp" + i);
                 if (hash.StartsWith("00000"))
                 {
-                    password += hash[5];
+                    if (password.Length < 8)
+                    {
+                        password += hash[5];
+                    }
+                    // Setting the parsedHash to 9 keeps it from being null and makes it longer than the array length
+                    // So it doesn't get added if it doesn't parse
+                    int parsedHash = 9;
+                    if (Char.IsNumber(hash[5]))
+                    {
+                        parsedHash = int.Parse(hash[5].ToString());
+                    }
+                    if (parsedHash != 9 && parsedHash < passwordArray.Length && !passwordArray[parsedHash].HasValue)
+                    {
+                        passwordArray[parsedHash] = hash[6];
+                        arraycount++;
+                    }                    
                 }
                 i++;
             }
+            string password2 = string.Join("", passwordArray);
             Console.WriteLine(password);
+            Console.WriteLine(password2);
         }
 
         public string CalculateMD5Hash(string input)
